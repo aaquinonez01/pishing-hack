@@ -2,10 +2,11 @@ const express = require('express');
 const app = express()
 const sequelize = require('./db.js')
 const User = require('./User.js');
-
+const cors = require("cors")
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use(cors())
 const connection = async ()=>{
     await sequelize.sync();
 }
