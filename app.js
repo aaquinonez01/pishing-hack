@@ -1,12 +1,14 @@
 const express = require('express');
 const app = express()
-const sequelize = require('./db.js')
-const User = require('./User.js');
 const cors = require("cors")
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cors())
+const sequelize = require('./db.js')
+const User = require('./User.js');
+
+
 const connection = async ()=>{
     await sequelize.sync();
 }
@@ -23,14 +25,12 @@ connection().then(()=>{
     console.log("DB Connected")
 })
 
-app.post("/api/v1/users", async(req, res)=>{
+app.post("/api/v1/users", (req, res)=>{
     const {username, password} = req.body;
     console.log(req.body)
-    const user = await User.create({
-        username, password
-    })
+    
     res.json({
-        data:user
+        data:username
     })
 
 })
