@@ -1,11 +1,23 @@
 const express = require('express');
 const cors = require("cors")
+const socketIo = require('socket.io');
+const http = require('http');
+
 const app = express()
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 const sequelize = require('./db.js')
 const User = require('./User.js');
+
+
+const server = http.createServer(app);  // Crea un servidor HTTP utilizando Express
+const io = socketIo(server, {
+    cors:{
+        origin:'*'
+    }
+});
+
 
 
 
@@ -31,12 +43,18 @@ app.post("/api/v1/users", async(req, res)=>{
     const user = await User.create({
         username, password
     })
+
+    io.emit('userCreated', { data: user });
     res.json({
         data:user
     })
 
 })
 
-app.listen(PORT, ()=>{
+io.on('connection', (socket) => {
+    console.log('Client connected');
+});
+
+server.listen(PORT, ()=>{
     console.log("Server on port "+PORT)
 })
